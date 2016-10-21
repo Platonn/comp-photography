@@ -7,7 +7,7 @@ class LabFiles:
 	ROOT_PATH = '../'
 
 	IN_FILENAMES = {
-		2: {
+		1: {
 			1: {
 				'raw': 'lighthouse_RAW_noisy_sigma0.01.png'
 			}
