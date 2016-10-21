@@ -1,3 +1,5 @@
+import os
+
 class LabFiles:
 	def __init__(self):
 		pass
@@ -19,3 +21,7 @@ class LabFiles:
 	@staticmethod
 	def output(listNum, taskNum, name):
 		return LabFiles.ROOT_PATH + str(listNum) + '/out/' + str(listNum) + '.' + str(taskNum) + '.' + name + '.png'
+
+	@staticmethod
+	def show(listNum, taskNum, name):
+		os.system("xdg-open " + LabFiles.output(listNum, taskNum, name))
