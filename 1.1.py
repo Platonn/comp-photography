@@ -9,7 +9,7 @@ rawImage = cv2.imread(LabFiles.input(1, 1, 'raw'))
 naiveDemosaicer = NaiveDemosaicer(rawImage)
 naiveDemosaicer.saveOutput(LabFiles.output(1, 1, 'raw-copy'))
 
-# demosaic
+# process
 naiveDemosaicer.run()
 
 # save input

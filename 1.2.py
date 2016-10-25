@@ -8,14 +8,14 @@ Timer.start('program')
 rawImage = cv2.imread(LabFiles.input(1, 2, 'raw'))
 edgeAwareDemosaicer = EdgeAwareDemosaicer(rawImage)
 
-# demosaic
+# process
 edgeAwareDemosaicer.run()
 
 # save input
-edgeAwareDemosaicer.saveOutput(LabFiles.output(1, 2, 'edge-aware-new'))
+edgeAwareDemosaicer.saveOutput(LabFiles.output(1, 2, 'edge-aware'))
 
 # stoper
 Timer.stop('program')
 
 # show
-LabFiles.show(1, 2, 'edge-aware-new')
+LabFiles.show(1, 2, 'edge-aware')

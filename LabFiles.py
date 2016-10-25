@@ -13,6 +13,9 @@ class LabFiles:
 			},
 			2: {
 				'raw': 'lighthouse_RAW_noisy_sigma0.01.png'
+			},
+			3: {
+				'raw': 'lighthouse_RAW_noisy_sigma0.01.png'
 			}
 		},
 	}
