@@ -9,7 +9,7 @@ class ChrominanceMedianFilterer:
 
 	def run(self):
 		imageYCrCb = cv2.cvtColor(self.tempImage, cv2.COLOR_BGR2YCR_CB)
-		imageYCrCb = self.__chrominanceMedianFilter(imageYCrCb, 1)
+		imageYCrCb = self.__chrominanceMedianFilter(imageYCrCb, 10)
 		self.tempImage = cv2.cvtColor(imageYCrCb, cv2.COLOR_YCR_CB2BGR)
 
 	def saveOutput(self, fileName):
@@ -17,7 +17,7 @@ class ChrominanceMedianFilterer:
 
 	def __chrominanceMedianFilter(self, imageYCrCb, radius):
 		im = cv2.copyMakeBorder(imageYCrCb, radius, radius, radius, radius, cv2.BORDER_REFLECT_101)
-		imOut = im[...]
+		imOut = im.copy()
 		Cb = 1
 		Cr = 2
 		r = radius
