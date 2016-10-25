@@ -10,8 +10,11 @@ class LabFiles:
 		1: {
 			1: {
 				'raw': 'lighthouse_RAW_noisy_sigma0.01.png'
+			},
+			2: {
+				'raw': 'lighthouse_RAW_noisy_sigma0.01.png'
 			}
-		}
+		},
 	}
 
 	@staticmethod
