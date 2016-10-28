@@ -1,0 +1,3 @@
+dcraw -T -W -o 0 _MG_4257-copy.CR2
+
+
