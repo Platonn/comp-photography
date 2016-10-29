@@ -21,6 +21,13 @@ class LabFiles:
 				'raw': 'raw/_MG_4257.tiff'
 			}
 		},
+		2: {
+			1: {
+				'stack-1': 'focalstack/stack1.png',
+				'stack-2': 'focalstack/stack2.png',
+				'stack-3': 'focalstack/stack3.png',
+			}
+		}
 	}
 
 	@staticmethod
