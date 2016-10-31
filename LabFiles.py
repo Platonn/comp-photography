@@ -26,6 +26,9 @@ class LabFiles:
 				'stack-1': 'focalstack/stack1.png',
 				'stack-2': 'focalstack/stack2.png',
 				'stack-3': 'focalstack/stack3.png',
+			},
+			3: {
+				'exr': 'Memorial_SourceImages/memorial.exr'
 			}
 		}
 	}

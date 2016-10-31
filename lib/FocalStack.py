@@ -23,15 +23,15 @@ class FocalStack:
 		self.maxArray = maxArray
 
 	def getOutput(self):
-		return self.maxArray[:,:,0] #return maxes without indexes
+		return self.maxArray[:, :, 0]  # return maxes without indexes
 
 	def getContributions(self):
 		imNum = len(self.images)
 		contributions = []
 		for i in range(imNum):
-			contribution = np.where(self.maxArray[:,:,1] == i, 255, 0) # highlight if it is max
+			contribution = np.where(self.maxArray[:, :, 1] == i, 255, 0)  # highlight if it is max
 			contributions.append(contribution)
-		return contributions #spike- funkcja nic nie zwraca teraz!
+		return contributions  # spike- funkcja nic nie zwraca teraz!
 
 	def __getGradientWithImageIndexChannel(self, image, imageIndex):
 		gradients = image
