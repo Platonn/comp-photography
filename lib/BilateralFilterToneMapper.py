@@ -4,7 +4,7 @@ import numpy as np
 
 class BilateralFilterToneMapper:
 	@staticmethod
-	def run(imExr, d = -1, sigmaColor = 0.5, sigmaSpace= 10):
+	def run(imExr, d = -1, sigmaColor = 0.5, sigmaSpace= 10, targetContrastParam=5):
 		im = imExr
 		B = im[:, :, 0]
 		G = im[:, :, 1]
@@ -26,7 +26,7 @@ class BilateralFilterToneMapper:
 		logDetail = logInputIntensity - logBase
 
 		# 5_
-		targetContrast = np.log10(5)
+		targetContrast = np.log10(targetContrastParam)
 		maxLogBase = np.max(logBase)
 		minLogBase = np.min(logBase)
 		compressionFactor = targetContrast / (maxLogBase - minLogBase)

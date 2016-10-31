@@ -29,12 +29,16 @@ class LabFiles:
 				'stack-3': 'focalstack/stack3.png',
 			},
 			2: {
-				'sec1-1': 'sec1/_MG_4460.tiff',
-				'sec1-2': 'sec1/_MG_4461.tiff',
-				'sec1-3': 'sec1/_MG_4462.tiff',
+				# 'sec1-1': 'sec1/_MG_4460.tiff',
+				# 'sec1-2': 'sec1/_MG_4461.tiff',
+				# 'sec1-3': 'sec1/_MG_4462.tiff',
 				'sec3-1': 'sec3/_MG_4469.resized.tiff',
 				'sec3-2': 'sec3/_MG_4470.resized.tiff',
-				'sec3-3': 'sec3/_MG_4471.resized.tiff'
+				'sec3-3': 'sec3/_MG_4471.resized.tiff',
+
+				'sec3-1-srgb': 'sec3/_MG_4469-sRGB.resized.tiff',
+				'sec3-2-srgb': 'sec3/_MG_4470-sRGB.resized.tiff',
+				'sec3-3-srgb': 'sec3/_MG_4471-sRGB.resized.tiff'
 			},
 			3: {
 				'exr': 'Memorial_SourceImages/memorial.exr'
