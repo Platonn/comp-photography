@@ -4,7 +4,7 @@ import numpy as np
 
 class BilateralFilterToneMapper:
 	@staticmethod
-	def run(imExr):
+	def run(imExr, d = -1, sigmaColor = 0.5, sigmaSpace= 10):
 		im = imExr
 		B = im[:, :, 0]
 		G = im[:, :, 1]
@@ -18,10 +18,6 @@ class BilateralFilterToneMapper:
 		g = G / inputIntensity
 		b = B / inputIntensity
 
-		# 3_
-		d = -1
-		sigmaColor = 0.5
-		sigmaSpace = 10
 		# 3
 		logInputIntensity = np.log10(inputIntensity)
 		logBase = cv2.bilateralFilter(logInputIntensity, d, sigmaColor, sigmaSpace)
