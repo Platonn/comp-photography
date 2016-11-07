@@ -15,7 +15,7 @@ homography = Homography(np.array([[0.8346, -0.0058, -141.3292],
 
 result = homography.apply(imPoster,imGreen)
 
-print result
+# print result
 
 cv2.imwrite(LabFiles.output(3, 1, 'homographied-neighbourFill'), result)
 
