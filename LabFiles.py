@@ -63,6 +63,10 @@ class LabFiles:
 			1: {
 				'green':  'green.png',
 				'poster': 'poster.png'
+			},
+			2: {
+				'green':  'green.png',
+				'poster': 'poster.png'
 			}
 		}
 	}
