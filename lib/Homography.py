@@ -74,10 +74,10 @@ class Homography:
 
 		sumWeight = aWeight + bWeight + cWeight + dWeight
 
-		aContrib = aWeight / sumWeight #Dist / total
-		bContrib = bWeight / sumWeight #Dist / total
-		cContrib = cWeight / sumWeight #Dist / total
-		dContrib = dWeight / sumWeight #Dist / total
+		aContrib = aWeight / sumWeight
+		bContrib = bWeight / sumWeight
+		cContrib = cWeight / sumWeight
+		dContrib = dWeight / sumWeight
 
 		result = A * aContrib + \
 		         B * bContrib + \
