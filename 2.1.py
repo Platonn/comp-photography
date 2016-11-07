@@ -17,12 +17,11 @@ cv2.imwrite(LabFiles.output(2, 1, 'stack-3'), im3)
 focalStack = FocalStack([im1, im2, im3])
 focalStack.run()
 
-res = focalStack.getOutput()
-cv2.imwrite(LabFiles.output(2, 1, 'focal-stacked'), res)
+(result, contributions) = focalStack.getOutput()
+cv2.imwrite(LabFiles.output(2, 1, 'focal-stacked'), result)
 
-contributions = focalStack.getContributions()
 for i in range(len(contributions)):
-	cv2.imwrite(LabFiles.output(2, 1, 'contribution-' + str(i)), contributions[i])
+	cv2.imwrite(LabFiles.output(2, 1, 'contribution-' + str(i)), contributions[i] * 255)
 
 # stoper
 Timer.stop('program')
