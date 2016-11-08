@@ -109,4 +109,4 @@ class Homography:
 			[1]
 		]
 		[newY, newX, newW] = np.dot(self.H, vector)
-		return (int(newY / newW), int(newX / newW))
+		return ((newY / newW), (newX / newW))
