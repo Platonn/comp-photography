@@ -1,20 +1,14 @@
 import numpy as np
-import math
-
 
 class HomographyFinder:
 	def __init__(self, points1, points2):
 		self.A = np.zeros((8, 9))
 		self.rowCursor = 0
-		pointsPairs = zip(points1, points2)
-		#print pointsPairs
+		pointPairs = zip(points1, points2)
+		self.__buildA(pointPairs)
 
-		self.__buildA(pointsPairs)
-
-		#print self.A
-
-	def __buildA(self, pointsPairs):
-		for (p1, p2) in pointsPairs:
+	def __buildA(self, pointPairs):
+		for (p1, p2) in pointPairs:
 			[y, x, _] = p1
 			[yPrim, xPrim, _] = p2
 			coefficientRow1 = [y, x, 1, 0, 0, 0, -y * yPrim, -x * yPrim, -yPrim]
@@ -27,17 +21,16 @@ class HomographyFinder:
 		self.rowCursor += 1
 
 	def solve(self):
-		svdSolution = np.linalg.svd(self.A, full_matrices=True)
-		(U, S, V) = svdSolution
+		(U, S, V) = np.linalg.svd(self.A, full_matrices=True)
+		solution = V[-1, :]
+		result = solution.reshape(3, 3)
 
-		solution = np.append(S, [0])
+		# spike
+		# (U, s, V) = np.linalg.svd(A, full_matrices=True)
+		# H = V[8, :]
+		# result = H.reshape((3, 3))
 
-		#print len(tempResult)
-		#print np.round(tempResult[0], 2)
-		#print tempResult[1]
-		#print np.round(tempResult[2], 2)
-		#result = tempResult[1]
-
-		result = solution.reshape(3,3)
-		print result
 		return result
+
+	def solveNumpy(self):
+		return np.linalg.solve(self.A, [0, 0, 0, 0, 0, 0, 0, 0])

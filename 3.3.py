@@ -6,27 +6,24 @@ from lib.HomographyFinder import *
 
 Timer.start('program')
 
-# read file
-# imGreen = cv2.imread(LabFiles.input(3, 3, 'green'))
-# imPoster = cv2.imread(LabFiles.input(3, 3, 'poster'))
+imGreen = cv2.imread(LabFiles.input(3, 3, 'green'))
+imPoster = cv2.imread(LabFiles.input(3, 3, 'poster'))
 
-# print result
+(h, w, _) = imPoster.shape
+h, w = h-1, w-1
 
-# cv2.imwrite(LabFiles.output(3, 2, 'homographied-interpolated'), result)
-# cv2.imwrite(LabFiles.output(3, 2, 'homographied-interpolated'), result)
+pointsPoster = np.array([[0, 0, 1], [0, w, 1], [h, w, 1], [h, 0, 1]])
+pointsGreen = np.array([[170, 95, 1], [171, 238, 1], [233, 235, 1], [239, 94, 1]])
+homographyFinder = HomographyFinder(pointsGreen, pointsPoster)
+calculatedHomography = homographyFinder.solve()
 
-#spike:
-points1 = np.array([
-	[1., 2., 1.], [3., 4., 1.], [5., 6., 1.], [7., 8., 1.]
-])
-points2 = np.array([
-	[-1., -2., -1.], [-3., -4., -1.], [-5., -6., -1.], [-7., -8., -1.]
-])
-homographyFinder = HomographyFinder(points1, points2)
-homographyFinder.solve()
+homography = Homography(calculatedHomography)
+result = homography.applyInterpolated(imPoster, imGreen)
+
+cv2.imwrite(LabFiles.output(3, 3, 'homographied'), result)
 
 # stoper
 Timer.stop('program')
 
 # show
-# LabFiles.show(3, 2, 'homographied-interpolated')
+LabFiles.show(3, 3, 'homographied')

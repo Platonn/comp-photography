@@ -9,11 +9,12 @@ Timer.start('program')
 imGreen = cv2.imread(LabFiles.input(3, 2, 'green'))
 imPoster = cv2.imread(LabFiles.input(3, 2, 'poster'))
 
-homography = Homography(np.array([[0.8346, -0.0058, -141.3292],
-                                  [0.0116, 0.8025, -78.2148],
-                                  [-0.0002, -0.0006, 1.]]))
+H = np.array([[0.8346, -0.0058, -141.3292],
+              [0.0116, 0.8025, -78.2148],
+              [-0.0002, -0.0006, 1.]])
+homography = Homography(H)
 
-result = homography.applyInterpolated(imPoster,imGreen)
+result = homography.applyInterpolated(imPoster, imGreen)
 
 # print result
 
