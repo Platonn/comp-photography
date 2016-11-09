@@ -1,10 +1,11 @@
 import numpy as np
 
+
 class HomographyFinder:
 	def __init__(self, points1, points2):
 		self.A = np.zeros((8, 9))
 		self.rowCursor = 0
-		pointPairs = zip(points1, points2)
+		pointPairs = zip(points2, points1)  # caution: change places 1 and 2
 		self.__buildA(pointPairs)
 
 	def __buildA(self, pointPairs):

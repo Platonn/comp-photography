@@ -70,7 +70,9 @@ class LabFiles:
 			},
 			3: {
 				'green':  'green.png',
-				'poster': 'poster.png'
+				'poster': 'poster.png',
+				'stata-1': 'pano/stata-1.png',
+				'stata-2': 'pano/stata-2.png'
 			}
 		}
 	}
