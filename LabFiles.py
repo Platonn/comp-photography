@@ -73,6 +73,12 @@ class LabFiles:
 				'poster': 'poster.png',
 				'stata-1': 'pano/stata-1.png',
 				'stata-2': 'pano/stata-2.png'
+			},
+			4: {
+				'stata-1': 'pano/stata-1.png',
+				'stata-2': 'pano/stata-2.png',
+				'sunset-1': 'pano/sunset-1.png',
+				'sunset-2': 'pano/sunset-2.png'
 			}
 		}
 	}

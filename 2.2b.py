@@ -22,7 +22,7 @@ imSec3_1 = Normalizer.from16bit(imSec3_1)
 imSec3_2 = Normalizer.from16bit(imSec3_2)
 imSec3_3 = Normalizer.from16bit(imSec3_3)
 
-#spike- for comparsion - without linearization:
+# for comparsion - without linearization:
 # # process
 # imagesWithExposures = [
 # 	(imSec3_1, imSec3_1_exposure),

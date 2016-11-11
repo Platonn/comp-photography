@@ -1,5 +1,5 @@
 import numpy as np
-
+from Homography import *
 
 class HomographyFinder:
 	def __init__(self, points1, points2):
@@ -25,13 +25,5 @@ class HomographyFinder:
 		(U, S, V) = np.linalg.svd(self.A, full_matrices=True)
 		solution = V[-1, :]
 		result = solution.reshape(3, 3)
-
-		# spike
-		# (U, s, V) = np.linalg.svd(A, full_matrices=True)
-		# H = V[8, :]
-		# result = H.reshape((3, 3))
-
+		self.homography = Homography(result)
 		return result
-
-	def solveNumpy(self):
-		return np.linalg.solve(self.A, [0, 0, 0, 0, 0, 0, 0, 0])

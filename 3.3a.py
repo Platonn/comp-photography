@@ -21,6 +21,9 @@ calculatedHomography = homographyFinder.solve()
 homography = Homography(calculatedHomography)
 result = homography.applyInterpolated(imPoster, imGreen)
 
+# print homography.calculateCornersCoords(imPoster)
+# print homography.getBoundingBoxAndOffset(imPoster, imGreen)
+
 cv2.imwrite(LabFiles.output(3, 3, 'homographied-green-poster'), result)
 
 # stoper
