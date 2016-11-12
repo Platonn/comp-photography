@@ -24,21 +24,33 @@ def getDir(target, subFolder=''):
 	return '../4/in/' + target + 'set/' + subFolder
 
 
-def filesGetResizedFullDescriptor(target):
+def filesGet32x32Descriptor(target):
 	feedbackObject = {
-		'fileNames': ['zeros'],
-		'descriptors': np.zeros(32*32)
+		'fileNames':        [],
+		'descriptors32x32': []
 	}
 
-	def get32Descriptor(inFolder, fileName, feedbackObject):
+	def get32x32Descriptor(inFolder, fileName, feedbackObject):
 		im = cv2.imread(inFolder + fileName, cv2.IMREAD_GRAYSCALE)
 		descriptor = im.flatten()
 
 		feedbackObject['fileNames'].append(fileName)
-		feedbackObject['descriptors'] = np.vstack((feedbackObject['descriptors'], descriptor))
+		feedbackObject['descriptors32x32'].append(descriptor)
 
-	applyFunctionToFiles(get32Descriptor, 'get32Descriptor', getDir(target, 'resized'), '.jpg')
-	np.save(getDir(target, 'resized') + 'descriptors32.npy', feedbackObject)
+	applyFunctionToFiles(get32x32Descriptor, 'get32x32Descriptor', getDir(target, 'resized'), '.jpg', feedbackObject)
+
+	Timer.start('filesGet32x32Descriptor vstack')
+	feedbackObject['descriptors32x32'] = np.vstack(feedbackObject['descriptors32x32'])
+	Timer.stop('filesGet32x32Descriptor vstack')
+
+	Timer.start('filesGet32x32Descriptor save descriptors32x32')
+	np.save(getDir(target, 'resized') + 'descriptors32x32.npy', feedbackObject['descriptors32x32'])
+	Timer.stop('filesGet32x32Descriptor save descriptors32x32')
+
+	Timer.start('filesGet32x32Descriptor save fileNames')
+	np.save(getDir(target, 'resized') + 'fileNames.npy', feedbackObject['fileNames'])
+	Timer.stop('filesGet32x32Descriptor save fileNames')
+
 
 def filesResizeTo32(target):
 	def resize32(inFolder, fileName, feedbackObject):
@@ -60,58 +72,47 @@ def countFiles(target):
 	print "number of files: " + str(feedbackObject['counter'])
 
 
-def filesCalculateSSD(target, descriptorType, testDescriptor):
-	feedbackObject = {
-		'testDescriptor': testDescriptor,
-		'ssdValues':      []
-	}
+def calculateSSD(target, descriptorsFileName, testDescriptor):
+	#Timer.start('calculateSSD')
+	descriptors = np.load(descriptorsFileName)
+	testDescriptorMatrix = np.zeros(descriptors.shape)
+	testDescriptorMatrix[...] = testDescriptor
 
-	def calculateSSD(inFolder, fileName, feedbackObject):
-		testDescriptor = feedbackObject['testDescriptor']
-		comparedDescriptor = np.load(inFolder + fileName)
-		ssdValue = np.sum((testDescriptor - comparedDescriptor) ** 2)
-		feedbackObject['ssdValues'].append({
-			'fileName': fileName,
-			'value':    ssdValue
-		})
+	def ssdPerRow(descriptorsRow, testDescriptor):
+		return np.sum((descriptorsRow - testDescriptor) ** 2)
 
-	applyFunctionToFiles(calculateSSD, 'calculateSSD', getDir(target, 'resized'), descriptorType + '.npy', feedbackObject)
-	pp.pprint(feedbackObject)
+	ssdValues = np.apply_along_axis(ssdPerRow, 1, descriptors, testDescriptor)
+	minSsdValue = np.min(ssdValues)
+	minSsdValueIndex = np.argmin(ssdValues)
+	#print minSsdValue
+	#Timer.stop('calculateSSD')
+	return (minSsdValue, minSsdValueIndex)
 
 
-def filesCalculatePCABase(target):
-	feedbackObject = {
-		'descriptorsEmpty': True,
-		'descriptors':      np.array([]),
-	}
+def calculatePCABase(target):
+	Timer.start('calculatePCABase')
 
-	def calculatePCABase(inFolder, fileName, feedbackObject):
-		descriptor = np.load(inFolder + fileName)
-		if feedbackObject['descriptorsEmpty']:
-			feedbackObject['descriptorsEmpty'] = False
-			feedbackObject['descriptors'] = np.array(descriptor)
-		else:
-			feedbackObject['descriptors'] = np.vstack(
-				(feedbackObject['descriptors'], descriptor))  # works only if array has any rows
+	Timer.start('calculatePCABase load descriptors32x32')
+	descriptors32x32 = np.load(getDir(target, 'resized') + 'descriptors32x32.npy')
+	Timer.stop('calculatePCABase load descriptors32x32')
 
-	applyFunctionToFiles(calculatePCABase, 'calculatePCABase', getDir(target, 'resized'), '.desc32.npy',
-	                     feedbackObject)
-	descriptors = feedbackObject['descriptors']
-	PCABase = cv2.PCACompute(descriptors, maxComponents=19)  # (meanPCA, eigenvectorsPCA)
+	Timer.start('calculatePCABase PCACompute')
+	PCABase = cv2.PCACompute(descriptors32x32, maxComponents=19)  # (meanPCA, eigenvectorsPCA)
+	Timer.stop('calculatePCABase PCACompute')
+
 	np.save(getDir(target, 'resized') + 'PCABase.npy', PCABase)
+	Timer.stop('calculatePCABase')
 
 
-def filesGetResizedPCADescriptor(target):
-	feedbackObject = {'PCABase': np.load(getDir(target, 'resized') + 'PCABase.npy')}
+def getPCADescriptors(target, PCABaseFileName):
+	Timer.start('getPCADescriptors')
+	PCABase = np.load(PCABaseFileName)
+	meanPCA, eigenvectorsPCA = PCABase
+	descriptors32x32 = np.load(getDir(target, 'resized') + 'descriptors32x32.npy')
+	descriptorsPCA = cv2.PCAProject(descriptors32x32, meanPCA, eigenvectorsPCA)
+	np.save(getDir(target, 'resized') + 'descriptorsPCA.npy', descriptorsPCA)
+	Timer.stop('getPCADescriptors')
 
-	def getResizedPCADescriptor(inFolder, fileName, feedbackObject):
-		print fileName
-		meanPCA, eigenvectorsPCA = feedbackObject['PCABase']
-		descriptor32 = np.load(inFolder + fileName)
-		descriptorPCA = cv2.PCAProject(np.array([descriptor32]), meanPCA, eigenvectorsPCA)
-		np.save(inFolder + fileName + '.descPCA.npy', descriptorPCA)
-
-	applyFunctionToFiles(getResizedPCADescriptor, 'getResizedPCADescriptor', getDir(target, 'resized'), '.desc32.npy', feedbackObject)
 
 def getColorFromImage(inFolder, inFileName, outFolder, outFileName):
 	# otworzyc obrazek IN i OUT
@@ -121,19 +122,64 @@ def getColorFromImage(inFolder, inFileName, outFolder, outFileName):
 	pass
 
 
+def getDescriptor(target, descriptorsFileName, fileName):
+	fileNames = np.load(getDir(target, 'resized') + 'fileNames.npy')
+	descriptors = np.load(descriptorsFileName)
+	index = np.where(fileNames == fileName)
+	descriptor = descriptors[index]
+	result = descriptor[0]
+	return result
+
+
 def main():
-	filesResizeTo32('test')
-	filesGetResizedFullDescriptor('test')
-	filesCalculatePCABase('test')
-	filesGetResizedPCADescriptor('test')
+	# preparation code:
+	# filesResizeTo32('test')
+	# filesResizeTo32('train')
+	# filesGet32x32Descriptor('test')
+	# filesGet32x32Descriptor('train')
+	# calculatePCABase('test')
+	# calculatePCABase('train')
+	# getPCADescriptors('test', getDir('test', 'resized') + 'PCABase.npy')
+	# getPCADescriptors('train', getDir('train', 'resized') + 'PCABase.npy')
 
-	# testDescriptor = np.load(getDir('test', 'resized') + '1.jpg.descPCA.npy')  # spike
-	# filesCalculateSSD('test', '.descPCA', testDescriptor)
+	# query code:
+
+	# 32x32:
+	# for i in range(1,101):
+	# 	testFileName = str(i) + '.jpg'
+	# 	testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptors32x32.npy', testFileName) #descriptorsPCA.npy
+	# 	minValue, minIndex = calculateSSD('train', getDir('train', 'resized') + 'descriptors32x32.npy', testDescriptor) #descriptorsPCA.npy #train
+	# 	fileNames = np.load(getDir('train', 'resized') + 'fileNames.npy') #train
+	# 	resultFileName = fileNames[minIndex]
+	#
+	# 	print testFileName + ' -> ' + resultFileName
+	#
+	# 	os.system('cp ' + getDir('train') + resultFileName + ' ../4/in/results/' + testFileName + '-32x32-' + resultFileName)
+
+	# PCA
+	# for i in range(1,101):
+	# 	testFileName = str(i) + '.jpg'
+	# 	testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptorsPCA.npy', testFileName) #descriptorsPCA.npy
+	# 	minValue, minIndex = calculateSSD('train', getDir('train', 'resized') + 'descriptorsPCA.npy', testDescriptor) #descriptorsPCA.npy #train
+	# 	fileNames = np.load(getDir('train', 'resized') + 'fileNames.npy') #train
+	# 	resultFileName = fileNames[minIndex]
+	#
+	# 	print testFileName + ' -> ' + resultFileName
+	#
+	# 	os.system('cp ' + getDir('train') + resultFileName + ' ../4/in/results/' + testFileName + '-PCA-' + resultFileName)
+
+	testFileName = '78.jpg'
+	testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptorsPCA.npy', testFileName)
+	minValue, minIndex = calculateSSD('test', getDir('test', 'resized') + 'descriptorsPCA.npy', testDescriptor)
+	fileNames = np.load(getDir('test', 'resized') + 'fileNames.npy') #train
+	resultFileName = fileNames[minIndex]
+	print str(minValue)
+	print testFileName + ' -> ' + resultFileName
+
+	# testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptors32x32.npy', '1.jpg')
+	# calculateSSD('test', getDir('test', 'resized') + 'descriptors32x32.npy', testDescriptor)
 
 
-#   spike - sprawdzenie czy dziala filesCalculateSSD:
-# testDescriptor = np.load(getDir('test', 'resized') + '21.jpg.desc32.npy')  # spike
-# filesCalculateSSD('test', '.desc32', testDescriptor)
 
 Timer.start('program')
 main()
