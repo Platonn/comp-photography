@@ -73,7 +73,7 @@ def countFiles(target):
 
 
 def calculateSSD(target, descriptorsFileName, testDescriptor):
-	#Timer.start('calculateSSD')
+	# Timer.start('calculateSSD')
 	descriptors = np.load(descriptorsFileName)
 	testDescriptorMatrix = np.zeros(descriptors.shape)
 	testDescriptorMatrix[...] = testDescriptor
@@ -84,12 +84,12 @@ def calculateSSD(target, descriptorsFileName, testDescriptor):
 	ssdValues = np.apply_along_axis(ssdPerRow, 1, descriptors, testDescriptor)
 	minSsdValue = np.min(ssdValues)
 	minSsdValueIndex = np.argmin(ssdValues)
-	#print minSsdValue
-	#Timer.stop('calculateSSD')
+	# print minSsdValue
+	# Timer.stop('calculateSSD')
 	return (minSsdValue, minSsdValueIndex)
 
 
-def calculatePCABase(target):
+def calculatePCABase(target, maxComponents):
 	Timer.start('calculatePCABase')
 
 	Timer.start('calculatePCABase load descriptors32x32')
@@ -97,29 +97,21 @@ def calculatePCABase(target):
 	Timer.stop('calculatePCABase load descriptors32x32')
 
 	Timer.start('calculatePCABase PCACompute')
-	PCABase = cv2.PCACompute(descriptors32x32, maxComponents=19)  # (meanPCA, eigenvectorsPCA)
+	PCABase = cv2.PCACompute(descriptors32x32, maxComponents=maxComponents)  # (meanPCA, eigenvectorsPCA)
 	Timer.stop('calculatePCABase PCACompute')
 
-	np.save(getDir(target, 'resized') + 'PCABase.npy', PCABase)
+	np.save(getDir(target, 'resized') + str(maxComponents) + 'PCABase.npy', PCABase)
 	Timer.stop('calculatePCABase')
 
 
-def getPCADescriptors(target, PCABaseFileName):
+def getPCADescriptors(target, PCABaseFileName, maxComponents):
 	Timer.start('getPCADescriptors')
 	PCABase = np.load(PCABaseFileName)
 	meanPCA, eigenvectorsPCA = PCABase
 	descriptors32x32 = np.load(getDir(target, 'resized') + 'descriptors32x32.npy')
 	descriptorsPCA = cv2.PCAProject(descriptors32x32, meanPCA, eigenvectorsPCA)
-	np.save(getDir(target, 'resized') + 'descriptorsPCA.npy', descriptorsPCA)
+	np.save(getDir(target, 'resized') + str(maxComponents) + 'descriptorsPCA.npy', descriptorsPCA)
 	Timer.stop('getPCADescriptors')
-
-
-def getColorFromImage(inFolder, inFileName, outFolder, outFileName):
-	# otworzyc obrazek IN i OUT
-	# przekonwertowac IN i OUT na YCrCb
-	# przekopiowac Cr i Cb ([1] i [2] kanaL) z IN do OUT
-	# skonwertowac OUT do RGB, zapisac OUT
-	pass
 
 
 def getDescriptor(target, descriptorsFileName, fileName):
@@ -131,54 +123,83 @@ def getDescriptor(target, descriptorsFileName, fileName):
 	return result
 
 
+def copyColorBetweenImages(colorFileName, grayFileName, outputFileName):
+	colorIm = cv2.imread(colorFileName)
+	grayIm = cv2.imread(grayFileName)
+
+	if (colorIm.shape != grayIm.shape):
+		print 'ERROR - images shapes dont match'
+		cv2.imwrite(outputFileName, grayIm)
+	else:
+		colorIm = cv2.cvtColor(colorIm, cv2.COLOR_BGR2YCR_CB)
+		grayIm = cv2.cvtColor(grayIm, cv2.COLOR_BGR2YCR_CB)
+		grayIm[:, :, 1:] = colorIm[:, :, 1:]  # copy CrCb channels
+		grayIm = cv2.cvtColor(grayIm, cv2.COLOR_YCR_CB2BGR)
+		cv2.imwrite(outputFileName, grayIm)
+
+
 def main():
+	maxComponents = 19
+
 	# preparation code:
 	# filesResizeTo32('test')
 	# filesResizeTo32('train')
 	# filesGet32x32Descriptor('test')
 	# filesGet32x32Descriptor('train')
-	# calculatePCABase('test')
-	# calculatePCABase('train')
-	# getPCADescriptors('test', getDir('test', 'resized') + 'PCABase.npy')
-	# getPCADescriptors('train', getDir('train', 'resized') + 'PCABase.npy')
+
+	### spike:
+	### calculatePCABase('test')
+
+	# calculatePCABase('train', maxComponents)
+	# getPCADescriptors('train', getDir('train', 'resized') + str(maxComponents) + 'PCABase.npy', maxComponents)
+	# getPCADescriptors('test', getDir('train', 'resized') + str(maxComponents) + 'PCABase.npy', maxComponents)
 
 	# query code:
 
 	# 32x32:
-	# for i in range(1,101):
+	# Timer.start('search 32x32')
+	# for i in range(1, 101):
 	# 	testFileName = str(i) + '.jpg'
-	# 	testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptors32x32.npy', testFileName) #descriptorsPCA.npy
-	# 	minValue, minIndex = calculateSSD('train', getDir('train', 'resized') + 'descriptors32x32.npy', testDescriptor) #descriptorsPCA.npy #train
-	# 	fileNames = np.load(getDir('train', 'resized') + 'fileNames.npy') #train
+	# 	testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptors32x32.npy',
+	# 	                               testFileName)  # descriptorsPCA.npy
+	# 	minValue, minIndex = calculateSSD('train', getDir('train', 'resized') + 'descriptors32x32.npy',
+	# 	                                  testDescriptor)  # descriptorsPCA.npy #train
+	# 	fileNames = np.load(getDir('train', 'resized') + 'fileNames.npy')
 	# 	resultFileName = fileNames[minIndex]
-	#
 	# 	print testFileName + ' -> ' + resultFileName
-	#
-	# 	os.system('cp ' + getDir('train') + resultFileName + ' ../4/in/results/' + testFileName + '-32x32-' + resultFileName)
+	# 	# os.system('cp ' + getDir('train') + resultFileName + ' ../4/in/results/' + testFileName + '_32x32_' + resultFileName)
+	# 	copyColorBetweenImages(getDir('train') + resultFileName,
+	# 	                       getDir('test') + testFileName,
+	# 	                       '../4/in/results/' + testFileName + '_32x32_' + 'COLOR' + resultFileName)
+	# Timer.stop('search 32x32')
 
 	# PCA
-	# for i in range(1,101):
-	# 	testFileName = str(i) + '.jpg'
-	# 	testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptorsPCA.npy', testFileName) #descriptorsPCA.npy
-	# 	minValue, minIndex = calculateSSD('train', getDir('train', 'resized') + 'descriptorsPCA.npy', testDescriptor) #descriptorsPCA.npy #train
-	# 	fileNames = np.load(getDir('train', 'resized') + 'fileNames.npy') #train
-	# 	resultFileName = fileNames[minIndex]
-	#
-	# 	print testFileName + ' -> ' + resultFileName
-	#
-	# 	os.system('cp ' + getDir('train') + resultFileName + ' ../4/in/results/' + testFileName + '-PCA-' + resultFileName)
+	Timer.start('search PCA' + str(maxComponents))
+	for i in range(1, 101):
+		testFileName = str(i) + '.jpg'
+		testDescriptor = getDescriptor('test', getDir('test', 'resized') + str(maxComponents) + 'descriptorsPCA.npy',
+		                               testFileName)  # descriptorsPCA.npy
+		minValue, minIndex = calculateSSD('train', getDir('train', 'resized') + str(maxComponents) + 'descriptorsPCA.npy',
+		                                  testDescriptor)  # descriptorsPCA.npy #train
+		fileNames = np.load(getDir('train', 'resized') + 'fileNames.npy')
+		resultFileName = fileNames[minIndex]
+		print testFileName + ' -> ' + resultFileName
+		# os.system('cp ' + getDir('train') + resultFileName + ' ../4/in/results/' + testFileName + '-' + str(maxComponents) + 'PCA-' + resultFileName)
+		copyColorBetweenImages(getDir('train') + resultFileName,
+		                       getDir('test') + testFileName,
+		                       '../4/in/results/' + testFileName + '-' + str(
+			                       maxComponents) + 'PCA-' + 'COLOR' + resultFileName)
+	Timer.stop('search PCA' + str(maxComponents))
 
-	testFileName = '78.jpg'
-	testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptorsPCA.npy', testFileName)
-	minValue, minIndex = calculateSSD('test', getDir('test', 'resized') + 'descriptorsPCA.npy', testDescriptor)
-	fileNames = np.load(getDir('test', 'resized') + 'fileNames.npy') #train
-	resultFileName = fileNames[minIndex]
-	print str(minValue)
-	print testFileName + ' -> ' + resultFileName
-
-	# testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptors32x32.npy', '1.jpg')
-	# calculateSSD('test', getDir('test', 'resized') + 'descriptors32x32.npy', testDescriptor)
-
+	# singular test:
+	# testFileName = '78.jpg'
+	# testDescriptor = getDescriptor('test', getDir('test', 'resized') + 'descriptorsPCA.npy', testFileName)
+	# minValue, minIndex = calculateSSD('test', getDir('test', 'resized') + 'descriptorsPCA.npy', testDescriptor)
+	# fileNames = np.load(getDir('test', 'resized') + 'fileNames.npy') #train
+	# resultFileName = fileNames[minIndex]
+	# print str(minValue)
+	# print testFileName + ' -> ' + resultFileName
+	pass
 
 
 Timer.start('program')
