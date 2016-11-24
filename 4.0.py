@@ -231,7 +231,7 @@ def main():
 	# prepare_descriptorsPCA(1024)
 
 	# search_32x32()
-	# search_PCA(19)
+	search_PCA(19)
 	# search_PCA(1024)
 
 	copyColorBetweenMatches32()

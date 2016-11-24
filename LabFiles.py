@@ -80,6 +80,14 @@ class LabFiles:
 				'sunset-1': 'pano/sunset-1.png',
 				'sunset-2': 'pano/sunset-2.png'
 			}
+		},
+		4: {},
+		5: {
+			1: {
+				'teapot_0_-1_1': '2_photometricstereo/teapot_0_-1_1.png',
+				'teapot_1_1_1': '2_photometricstereo/teapot_1_1_1.png',
+				'teapot_-1_1_1': '2_photometricstereo/teapot_-1_1_1.png',
+			}
 		}
 	}
 
