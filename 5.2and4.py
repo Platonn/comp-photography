@@ -41,19 +41,22 @@ uffiziProbe = cv2.imread(LabFiles.input(5, 2, 'uffizi-probe'), cv2.IMREAD_ANYCOL
 
 images, dirs, intens = readTeapots()
 
-graceResult = Relighter.relightImage(images, dirs, intens, graceProbe)
-graceResult  = Normalizer.normalize(graceResult )
-graceResult = Normalizer.to8bit(graceResult )
-cv2.imwrite(LabFiles.output(5, 2, 'teapots-grace'), graceResult)
+# graceResult = Relighter.relightImage(images, dirs, intens, graceProbe)
+# graceResult  = Normalizer.normalize(graceResult )
+# graceResult = Normalizer.to8bit(graceResult )
+# cv2.imwrite(LabFiles.output(5, 2, 'teapots-grace'), graceResult)
+#
+# rnlResult = Relighter.relightImage(images, dirs, intens, rnlProbe)
+# rnlResult  = Normalizer.normalize(rnlResult )
+# rnlResult = Normalizer.to8bit(rnlResult )
+# cv2.imwrite(LabFiles.output(5, 2, 'teapots-rnl'), rnlResult)
+#
+# uffiziResult = Relighter.relightImage(images, dirs, intens, uffiziProbe)
+# uffiziResult  = Normalizer.normalize(uffiziResult )
+# uffiziResult = Normalizer.to8bit(uffiziResult )
+# cv2.imwrite(LabFiles.output(5, 2, 'teapots-uffizi'), uffiziResult)
 
-rnlResult = Relighter.relightImage(images, dirs, intens, rnlProbe)
-rnlResult  = Normalizer.normalize(rnlResult )
-rnlResult = Normalizer.to8bit(rnlResult )
-cv2.imwrite(LabFiles.output(5, 2, 'teapots-rnl'), rnlResult)
-
-uffiziResult = Relighter.relightImage(images, dirs, intens, uffiziProbe)
-uffiziResult  = Normalizer.normalize(uffiziResult )
-uffiziResult = Normalizer.to8bit(uffiziResult )
-cv2.imwrite(LabFiles.output(5, 2, 'teapots-uffizi'), uffiziResult)
+Relighter.relightVideo(LabFiles.output(5, 4, 'teapot-grace-video', '.avi'), 1000, 10, images, dirs, intens, graceProbe)
 
 LabFiles.show(5, 2, 'teapots-grace')
+LabFiles.show(5, 4, 'teapots-grace-video', '.avi')
