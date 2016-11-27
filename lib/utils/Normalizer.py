@@ -14,7 +14,10 @@ class Normalizer:
 	def from8bit(image):
 		return image.astype('float32') / Normalizer.MAX_8_BIT
 
-
 	@staticmethod
 	def to8bit(image):
 		return image * Normalizer.MAX_8_BIT
+
+	@staticmethod
+	def normalize(image):
+		return image / np.max(image)

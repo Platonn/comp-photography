@@ -69,14 +69,14 @@ class LabFiles:
 				'poster': 'poster.png'
 			},
 			3: {
-				'green':  'green.png',
-				'poster': 'poster.png',
+				'green':   'green.png',
+				'poster':  'poster.png',
 				'stata-1': 'pano/stata-1.png',
 				'stata-2': 'pano/stata-2.png'
 			},
 			4: {
-				'stata-1': 'pano/stata-1.png',
-				'stata-2': 'pano/stata-2.png',
+				'stata-1':  'pano/stata-1.png',
+				'stata-2':  'pano/stata-2.png',
 				'sunset-1': 'pano/sunset-1.png',
 				'sunset-2': 'pano/sunset-2.png'
 			}
@@ -85,8 +85,19 @@ class LabFiles:
 		5: {
 			1: {
 				'teapot_0_-1_1': '2_photometricstereo/teapot_0_-1_1.png',
-				'teapot_1_1_1': '2_photometricstereo/teapot_1_1_1.png',
+				'teapot_1_1_1':  '2_photometricstereo/teapot_1_1_1.png',
 				'teapot_-1_1_1': '2_photometricstereo/teapot_-1_1_1.png',
+			},
+			2: {
+				'teapots-prefix': '1_relighting/data/teapot_',
+				'grace-probe':    '1_relighting/grace_probe.exr',
+				'rnl-probe':      '1_relighting/rnl_probe.exr',
+				'uffizi-probe':   '1_relighting/uffizi_probe.exr'
+			},
+			3: {
+				'knight-prefix': '1_relighting/knight_fighting-resized/knight_fighting_',
+				'light-directions': '1_relighting/light_directions.txt',
+				'light-intensities': '1_relighting/light_intensities.txt'
 			}
 		}
 	}
