@@ -95,9 +95,23 @@ class LabFiles:
 				'uffizi-probe':   '1_relighting/uffizi_probe.exr'
 			},
 			3: {
-				'knight-prefix': '1_relighting/knight_fighting-resized/knight_fighting_',
-				'light-directions': '1_relighting/light_directions.txt',
+				'knight-prefix':     '1_relighting/knight_fighting-resized/knight_fighting_',
+				'light-directions':  '1_relighting/light_directions.txt',
 				'light-intensities': '1_relighting/light_intensities.txt'
+			}
+		},
+		6: {
+			1: {
+				'filts-prefix': 'filts/filt_scl0',
+				'clock':        'my/clock.bmp',
+				'cup':          'my/cup.bmp'
+			}
+		},
+		7: {
+			1: {
+				'matrioska':   '9x9/matrioska.jpg',
+				'motorbike':   '9x9/motorbike16.jpg',
+				'building': '17x17/sanmiguellf.jpg'
 			}
 		}
 	}
