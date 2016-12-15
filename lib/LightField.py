@@ -127,11 +127,11 @@ class LightField:
 		return images
 
 	@staticmethod
-	def merge(images, radius):
+	def merge(images, radius, (shiftY, shiftX)):
 		numVertical, numHorizontal, height, width, channels = images.shape
 		result = np.zeros((height, width, channels))
-		centerVertical = numVertical/2
-		centerHorizontal = numHorizontal / 2
+		centerVertical = numVertical/2 + shiftY
+		centerHorizontal = numHorizontal / 2 + shiftX
 		for i in range(centerVertical-radius, centerVertical+radius+1):
 			for j in range(centerHorizontal-radius, centerHorizontal+radius+1):
 				result += images[i, j]
@@ -158,18 +158,52 @@ class LightField:
 
 
 	@staticmethod
-	def displacementVideo(fileName, images, steps):
+	def displacementVideo(fileName, images, aperture, steps):
 		numVertical, numHorizontal, height, width, channels = images.shape
 		video = cv2.VideoWriter(fileName, cv2.cv.CV_FOURCC(*'MJPG'), 15, (width, height))
 		frames = []
 		for displacement in steps:
 			print displacement
 			frame = LightField.displace(images, displacement)
-			frame = LightField.merge(frame, 4)
+			frame = LightField.merge(frame, aperture, (0,0))
 			frame = Normalizer.to8bit(frame)
 			frames.append(frame.clip(0, 255).astype(np.uint8))
 
 		for frame in itertools.chain(frames,reversed(frames)):
+			video.write(frame)
+
+		video.release()
+
+	@staticmethod
+	def movingApertureVideo(fileName, images, aperture, amplitude, steps):
+		numVertical, numHorizontal, height, width, channels = images.shape
+		video = cv2.VideoWriter(fileName, cv2.cv.CV_FOURCC(*'MJPG'), 15, (width, height))
+		frames = []
+		for displacement in steps:
+			print displacement
+
+			ampl = amplitude
+			same = lambda x: [x] * (2*ampl+1)
+			seqUp = range(-ampl,ampl + 1)
+			seqDown = range(ampl, -ampl-1, -1)
+
+			topShifts = zip(same(-ampl), seqUp)
+			rightShifts = zip(seqUp, same(ampl))
+			bottomShifts = zip(same(ampl), seqDown)
+			leftShifts = zip(seqDown, same(-ampl))
+
+			allShifts = itertools.chain(topShifts, rightShifts, bottomShifts, leftShifts)
+			# print list(allShifts)
+
+			for shift in allShifts:
+				# print shift
+				frame = LightField.displace(images, displacement)
+				frame = LightField.merge(frame, aperture, shift)
+				frame = Normalizer.to8bit(frame)
+				# print frame #spike
+				frames.append(frame.clip(0, 255).astype(np.uint8))
+
+		for frame in itertools.chain(frames, reversed(frames)):
 			video.write(frame)
 
 		video.release()
