@@ -104,14 +104,22 @@ class LabFiles:
 			1: {
 				'filts-prefix': 'filts/filt_scl0',
 				'clock':        'my/clock.bmp',
-				'cup':          'my/cup.bmp'
+				'cup':          'my/cup.bmp',
+				'cups':         'vendor/cups_board_inp.bmp'
 			}
 		},
 		7: {
 			1: {
-				'matrioska':   '9x9/matrioska.jpg',
-				'motorbike':   '9x9/motorbike16.jpg',
-				'building': '17x17/sanmiguellf.jpg'
+				'matrioska': '9x9/matrioska.jpg',
+				'motorbike': '9x9/motorbike16.jpg',
+				'building':  '17x17/sanmiguellf.jpg'
+			}
+		},
+		8: {
+			1: {
+				'mask': 'mask.png',
+				'object': 'bear.png',
+				'background': 'waterpool.png'
 			}
 		}
 	}
